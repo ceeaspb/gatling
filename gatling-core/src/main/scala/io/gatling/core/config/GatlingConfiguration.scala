@@ -80,7 +80,8 @@ object GatlingConfiguration extends StrictLogging {
           "gatling.http.ahc.provider",
           "gatling.http.ahc.requestCompressionLevel",
           "gatling.http.ahc.userAgent",
-          "gatling.http.ahc.rfc6265CookieEncoding").foreach(warnAboutRemovedProperty)
+          "gatling.http.ahc.rfc6265CookieEncoding",
+          "gatling.data.graphite.bucketWidth").foreach(warnAboutRemovedProperty)
       }
 
     val classLoader = getClass.getClassLoader
@@ -199,7 +200,7 @@ object GatlingConfiguration extends StrictLogging {
           port = config.getInt(CONF_DATA_GRAPHITE_PORT),
           protocol = config.getString(CONF_DATA_GRAPHITE_PROTOCOL),
           rootPathPrefix = config.getString(CONF_DATA_GRAPHITE_ROOT_PATH_PREFIX),
-          bucketWidth = config.getInt(CONF_DATA_GRAPHITE_BUCKET_WIDTH),
+          quantileCompression = config.getInt(CONF_DATA_GRAPHITE_QUANTILE_COMPRESSION),
           bufferSize = config.getInt(CONF_DATA_GRAPHITE_BUFFER_SIZE)),
         jdbc = JDBCDataWriterConfiguration(
           db = DBConfiguration(
@@ -366,7 +367,7 @@ case class GraphiteDataWriterConfiguration(
   port: Int,
   protocol: String,
   rootPathPrefix: String,
-  bucketWidth: Int,
+  quantileCompression: Int,
   bufferSize: Int)
 
 case class GatlingConfiguration(
