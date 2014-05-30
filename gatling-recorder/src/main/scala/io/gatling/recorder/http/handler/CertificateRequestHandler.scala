@@ -52,7 +52,7 @@ class CertificateRequestHandler() extends SimpleChannelUpstreamHandler with Stri
             try {
               // as the request is for the cert we don't want the proxy logic to be hit
               context.getPipeline().remove(BootstrapFactory.ConditionalHandlerName);
-            } catch { case ignore: Exception => logger.debug("tried to remove non existent conditional handler" + ignore) }
+            } catch { case error: Exception => logger.debug("tried to remove non existent conditional handler" + error) }
 
             val response = new DefaultHttpResponse(HTTP_1_1, OK)
             context.getChannel().write(response)
@@ -68,7 +68,7 @@ class CertificateRequestHandler() extends SimpleChannelUpstreamHandler with Stri
 
             } catch {
               case e: Exception =>
-                println("error with cert file handling : " + e)
+                logger.debug("error with cert file handling : " + e)
             }
           }
 

@@ -24,12 +24,15 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import io.gatling.recorder.http.HttpProxy
 import io.gatling.recorder.http.handler.{ ClientPortUnifiedRequestHandler, ClientRequestHandler }
 import io.gatling.recorder.http.ssl.SSLEngineFactory
+import io.gatling.recorder.http.handler.CertificateRequestHandler
+import org.jboss.netty.handler.stream.ChunkedWriteHandler
 
 object BootstrapFactory extends StrictLogging {
 
   val SslHandlerName = "ssl"
   val GatlingHandlerName = "gatling"
   val ConditionalHandlerName = "conditional"
+    val CertFileHandlerName = "cert_file_handler"
 
   private val ChunkMaxSize = 100 * 1024 * 1024 // 100Mo
 
@@ -66,6 +69,8 @@ object BootstrapFactory extends StrictLogging {
         pipeline.addLast("aggregator", new HttpChunkAggregator(ChunkMaxSize))
         pipeline.addLast("encoder", new HttpResponseEncoder)
         pipeline.addLast("deflater", new HttpContentCompressor)
+        pipeline.addLast("chunkedWriter", new ChunkedWriteHandler)
+        pipeline.addLast(CertFileHandlerName, new CertificateRequestHandler)
         pipeline.addLast(ConditionalHandlerName, new ClientPortUnifiedRequestHandler(proxy, pipeline))
         pipeline
       }
